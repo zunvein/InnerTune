@@ -1,9 +1,10 @@
 name: Build PR
+
 on:
   pull_request:
     branches:
       - '**'
-  workflow_dispatch:  # Add this line
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   build:
@@ -11,14 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: set up JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: "zulu"
-          cache: 'gradle'
+          cache: gradle
 
-      - name: Build debug APK and run jvm tests
+      - name: Build release APK and run JVM tests
         run: ./gradlew assembleRelease lintFullRelease testFullReleaseUnitTest --stacktrace -DskipFormatKtlint
         env:
           PULL_REQUEST: 'true'
@@ -26,5 +27,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-        name: app-release
-        path: app/build/outputs/apk/full/release/*.apk
+          name: app-release
+          path: app/build/outputs/apk/release/*.apk  # Adjust if using product flavors
